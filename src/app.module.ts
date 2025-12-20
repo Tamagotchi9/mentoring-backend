@@ -7,7 +7,12 @@ import { NotesModule } from './notes/notes.module';
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb+srv://voloshko999_db_user:ztXYtnYM600@cluster0.lkvycwd.mongodb.net/notes-app?appName=Cluster0',
+      process.env.MONGODB_URI ||
+        'mongodb+srv://voloshko999_db_user:ztXYtnYM600@cluster0.lkvycwd.mongodb.net/notes-app?appName=Cluster0',
+      {
+        ssl: true,
+        tlsAllowInvalidCertificates: false,
+      },
     ),
     NotesModule,
   ],
