@@ -11,14 +11,14 @@ export class Note {
   @Prop()
   text: string;
 
-  @Prop()
+  @Prop({ default: false })
   asTask: boolean;
 
-  @Prop()
+  @Prop({ default: false })
   completed: boolean;
 
-  @Prop()
-  remindDate: string;
+  @Prop({ default: null })
+  remindDate: string | null;
 }
 
 export const NoteSchema = SchemaFactory.createForClass(Note);

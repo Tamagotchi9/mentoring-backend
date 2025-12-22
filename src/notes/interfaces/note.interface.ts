@@ -4,7 +4,7 @@ export interface Note {
   text: string;
   asTask: boolean;
   completed: boolean;
-  remindDate: string;
+  remindDate: string | null;
   createdAt: string;
   updatedAt: string;
 }
