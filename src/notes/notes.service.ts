@@ -8,25 +8,41 @@ import { UpdateNoteDto } from './dto/update-note.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Note } from './schemas/note.schema';
 import { Model } from 'mongoose';
+import { Category } from 'src/categories/schemas/category.schema';
 
 @Injectable()
 export class NotesService {
-  constructor(@InjectModel(Note.name) private noteModel: Model<Note>) {}
+  constructor(
+    @InjectModel(Note.name) private noteModel: Model<Note>,
+    @InjectModel(Category.name) private categoryModel: Model<Category>,
+  ) {}
 
-  create(createNoteDto: CreateNoteDto): Promise<Note> {
+  async create(createNoteDto: CreateNoteDto): Promise<Note> {
     if (!createNoteDto.title) {
       throw new BadRequestException('Title is required');
+    }
+    if (createNoteDto.categoryId) {
+      const categoryExists = await this.categoryModel.findById(
+        createNoteDto.categoryId,
+      );
+      if (!categoryExists) {
+        throw new BadRequestException('Category not found');
+      }
     }
     const createdNote = new this.noteModel(createNoteDto);
     return createdNote.save();
   }
 
-  findAll(): Promise<Note[]> {
-    return this.noteModel.find().exec();
+  findAll(categoryId?: string): Promise<Note[]> {
+    const query = categoryId ? { categoryId } : {};
+    return this.noteModel.find(query).populate('categoryId').exec();
   }
 
   async findOne(id: string): Promise<Note> {
-    const note = await this.noteModel.findById(id).exec();
+    const note = await this.noteModel
+      .findById(id)
+      .populate('categoryId')
+      .exec();
     if (!note) {
       throw new NotFoundException(`Note with ID ${id} not found`);
     }
