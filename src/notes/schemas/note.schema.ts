@@ -17,7 +17,7 @@ export class Note {
   @Prop({ default: false })
   completed: boolean;
 
-  @Prop({ default: null })
+  @Prop({ type: String, default: null })
   remindDate: string | null;
 }
 
