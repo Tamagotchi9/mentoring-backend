@@ -12,5 +12,6 @@ import { CategoriesModule } from '../categories/categories.module';
   ],
   controllers: [NotesController],
   providers: [NotesService],
+  exports: [MongooseModule],
 })
 export class NotesModule {}

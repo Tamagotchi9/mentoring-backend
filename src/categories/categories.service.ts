@@ -8,7 +8,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './schemas/category.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Note } from 'src/notes/schemas/note.schema';
+import { Note } from '../notes/schemas/note.schema';
 
 @Injectable()
 export class CategoriesService {

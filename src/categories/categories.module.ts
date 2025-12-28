@@ -3,14 +3,14 @@ import { CategoriesService } from './categories.service';
 import { CategoriesController } from './categories.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Category, CategorySchema } from './schemas/category.schema';
-import { NotesModule } from 'src/notes/notes.module';
+import { Note, NoteSchema } from '../notes/schemas/note.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Category.name, schema: CategorySchema },
+      { name: Note.name, schema: NoteSchema },
     ]),
-    NotesModule,
   ],
   controllers: [CategoriesController],
   providers: [CategoriesService],
