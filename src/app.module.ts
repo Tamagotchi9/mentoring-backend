@@ -4,6 +4,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { NotesModule } from './notes/notes.module';
 import { CategoriesModule } from './categories/categories.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { ConfigModule } from '@nestjs/config';
+import { JwtGuard } from './auth/jwt.guard';
+import { APP_GUARD } from '@nestjs/core';
+
+import jwtConfig from './config/jwt';
 
 @Module({
   imports: [
@@ -15,10 +22,22 @@ import { CategoriesModule } from './categories/categories.module';
         tlsAllowInvalidCertificates: false,
       },
     ),
+    ConfigModule.forRoot({
+      load: [jwtConfig],
+      isGlobal: true,
+    }),
     NotesModule,
     CategoriesModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    }
+  ],
 })
 export class AppModule {}
