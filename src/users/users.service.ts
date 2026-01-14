@@ -18,7 +18,7 @@ export class UsersService {
         return user;
     }
     async create(createUserDto: CreateUserDto): Promise<User | false> {
-        const user = await this.userModel.findOne({ email }).exec();
+        const user = await this.userModel.findOne({ email: createUserDto.email }).exec();
         if (user) {
             throw new BadRequestException('User already exists');
         }
