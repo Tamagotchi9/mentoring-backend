@@ -21,9 +21,9 @@ export class NotesService {
     if (!createNoteDto.title) {
       throw new BadRequestException('Title is required');
     }
-    if (createNoteDto.categoryId) {
+    if (createNoteDto.category) {
       const categoryExists = await this.categoryModel.findById(
-        createNoteDto.categoryId,
+        createNoteDto.category,
       );
       if (!categoryExists) {
         throw new BadRequestException('Category not found');
@@ -33,15 +33,22 @@ export class NotesService {
     return createdNote.save();
   }
 
-  findAll(categoryId?: string): Promise<Note[]> {
-    const query = categoryId ? { categoryId } : {};
-    return this.noteModel.find(query).populate('categoryId').exec();
+  findAll(userId: string, categoryId?: string): Promise<Note[]> {
+    const query = categoryId
+      ? { user: userId, category: categoryId }
+      : { user: userId };
+    return this.noteModel
+      .find(query)
+      .populate('category')
+      .populate('user', '_id email username createdAt')
+      .exec();
   }
 
   async findOne(id: string): Promise<Note> {
     const note = await this.noteModel
       .findById(id)
-      .populate('categoryId')
+      .populate('category')
+      .populate('user', '_id email username createdAt')
       .exec();
     if (!note) {
       throw new NotFoundException(`Note with ID ${id} not found`);
@@ -52,6 +59,8 @@ export class NotesService {
   async update(id: string, updateNoteDto: UpdateNoteDto): Promise<Note> {
     const updatedNote = await this.noteModel
       .findByIdAndUpdate(id, updateNoteDto, { new: true })
+      .populate('category')
+      .populate('user', '_id email username createdAt')
       .exec();
     if (!updatedNote) {
       throw new NotFoundException(`Note with ID ${id} not found`);

@@ -24,12 +24,19 @@ export class CategoriesService {
     return createdCategory.save();
   }
 
-  findAll(): Promise<Category[]> {
-    return this.categoryModel.find().exec();
+  findAll(userId: string): Promise<Category[]> {
+    const query = { user: userId };
+    return this.categoryModel
+      .find(query)
+      .populate('user', '_id email username createdAt')
+      .exec();
   }
 
   async findOne(id: string): Promise<Category> {
-    const category = await this.categoryModel.findById(id).exec();
+    const category = await this.categoryModel
+      .findById(id)
+      .populate('user', '_id email username createdAt')
+      .exec();
     if (!category) {
       throw new NotFoundException(`Category with ID ${id} not found`);
     }
@@ -42,6 +49,7 @@ export class CategoriesService {
   ): Promise<Category> {
     const updatedCategory = await this.categoryModel
       .findByIdAndUpdate(id, updateCategoryDto, { new: true })
+      .populate('user', '_id email username createdAt')
       .exec();
     if (!updatedCategory) {
       throw new NotFoundException(`Category with ID ${id} not found`);
@@ -51,7 +59,7 @@ export class CategoriesService {
 
   async remove(id: string): Promise<void> {
     const result = await this.categoryModel.findByIdAndDelete(id).exec();
-    await this.noteModel.deleteMany({ categoryId: id }).exec();
+    await this.noteModel.deleteMany({ category: id }).exec();
     if (!result) {
       throw new NotFoundException(`Category with ID ${id} not found`);
     }

@@ -1,5 +1,6 @@
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { User } from 'src/users/schemas/user.schema';
 
 export type CategoryDocument = HydratedDocument<Category>;
 
@@ -16,6 +17,9 @@ export class Category {
 
   @Prop({ default: Date.now })
   createdAt: Date;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  user: User;
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { User, UserDocument } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -7,26 +11,26 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-    constructor(
-        @InjectModel(User.name) private userModel: Model<User>,
-    ) {}
-    async findByEmail(email: string): Promise<UserDocument> {
-        const user = await this.userModel.findOne({ email }).exec();
-        if (!user) {
-            throw new NotFoundException('User not found');
-        }
-        return user;
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  async findByEmail(email: string): Promise<UserDocument> {
+    const user = await this.userModel.findOne({ email }).exec();
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
-    async create(createUserDto: CreateUserDto): Promise<User | false> {
-        const user = await this.userModel.findOne({ email: createUserDto.email }).exec();
-        if (user) {
-            throw new BadRequestException('User already exists');
-        }
-        const createdUser = new this.userModel(createUserDto);
-        createdUser.password = await bcrypt.hash(createUserDto.password, 10);
-        return await createdUser.save();
+    return user;
+  }
+  async create(createUserDto: CreateUserDto): Promise<User | false> {
+    const user = await this.userModel
+      .findOne({ email: createUserDto.email })
+      .exec();
+    if (user) {
+      throw new BadRequestException('User already exists');
     }
-    async saveRefreshToken(userId: string, refreshToken: string) {
-        await this.userModel.findByIdAndUpdate(userId, { refreshToken }).exec();
-    }
+    const createdUser = new this.userModel(createUserDto);
+    createdUser.password = await bcrypt.hash(createUserDto.password, 10);
+    return await createdUser.save();
+  }
+  async saveRefreshToken(userId: string, refreshToken: string) {
+    await this.userModel.findByIdAndUpdate(userId, { refreshToken }).exec();
+  }
 }

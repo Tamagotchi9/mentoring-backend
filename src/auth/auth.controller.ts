@@ -6,29 +6,30 @@ import { Public } from './public.decorator';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
-    @Public()
-    @UseGuards(AuthGuard('local'))
-    @Post('login')
-    login(@Body() loginDto: { email: string, password: string }) { // todo: create dto for login
-        return this.authService.login(loginDto.email, loginDto.password);
-    }
+  @Public()
+  @UseGuards(AuthGuard('local'))
+  @Post('login')
+  login(@Body() loginDto: { email: string, password: string }) {
+    // todo: create dto for login
+    return this.authService.login(loginDto.email, loginDto.password);
+  }
 
-    @Public()
-    @Post('register')
-    register(@Body() registerDto: CreateUserDto): Promise<boolean> {
-        return this.authService.register(registerDto);
-    }
+  @Public()
+  @Post('register')
+  register(@Body() registerDto: CreateUserDto): Promise<boolean> {
+    return this.authService.register(registerDto);
+  }
 
-    @Get('profile')
-    profile(@Req() req: any) {
-        return req.user;
-    }
+  @Get('profile')
+  profile(@Req() req: any) {
+    return req.user;
+  }
 
-    @Public()
-    @Post('refresh')
-    refresh(@Body() refreshDto: { refreshToken: string }) {
-        return this.authService.refreshTokens(refreshDto.refreshToken);
-    }
+  @Public()
+  @Post('refresh')
+  refresh(@Body() refreshDto: { refreshToken: string }) {
+    return this.authService.refreshTokens(refreshDto.refreshToken);
+  }
 }

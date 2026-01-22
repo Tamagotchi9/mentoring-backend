@@ -4,5 +4,6 @@ export class CreateNoteDto {
   asTask?: boolean;
   completed?: boolean;
   remindDate?: string | null;
-  categoryId?: string;
+  category?: string;
+  user: string;
 }

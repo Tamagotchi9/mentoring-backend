@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Req,
 } from '@nestjs/common';
 import { NotesService } from './notes.service';
 import { CreateNoteDto } from './dto/create-note.dto';
@@ -17,13 +18,16 @@ export class NotesController {
   constructor(private readonly notesService: NotesService) {}
 
   @Post()
-  create(@Body() createNoteDto: CreateNoteDto) {
+  create(@Req() req: any, @Body() createNoteDto: CreateNoteDto) {
+    const userId = req.user.sub as string;
+    createNoteDto.user = userId;
     return this.notesService.create(createNoteDto);
   }
 
   @Get()
-  findAll(@Query('categoryId') categoryId?: string) {
-    return this.notesService.findAll(categoryId);
+  findAll(@Req() req: any, @Query('categoryId') categoryId?: string) {
+    const userId = req.user.sub as string;
+    return this.notesService.findAll(userId, categoryId);
   }
 
   @Get(':id')

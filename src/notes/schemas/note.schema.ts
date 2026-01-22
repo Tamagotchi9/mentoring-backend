@@ -1,6 +1,7 @@
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Category } from 'src/categories/schemas/category.schema';
+import { User } from 'src/users/schemas/user.schema';
 
 export type NoteDocument = HydratedDocument<Note>;
 
@@ -25,7 +26,10 @@ export class Note {
   createdAt: Date;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Category' })
-  categoryId?: Category;
+  category: Category;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  user: User;
 }
 
 export const NoteSchema = SchemaFactory.createForClass(Note);
